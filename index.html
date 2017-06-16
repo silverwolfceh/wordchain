@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WORDCHAIN WAR GAME</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #eee; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      #m { border: 0; padding: 10px; width: 60%; margin-right: .5%; }
+      #name { border: 0; padding: 10px; width: 26%; margin-right: .5%; }
+      #result { border: 0; padding: 10px; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #settingbtn { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; display: none }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #messages { margin-bottom: 40px; margin-top: 50px }
+      #config { visibility: hidden; position: absolute; z-index: 5; display: block; margin: auto; line-height: 2.5; background: #eee}
+    </style>
+    <script>
+      function make_id()
+      {
+          var text = "";
+          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+          for( var i=0; i < 10; i++ )
+              text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+          return text;
+      }
+      if(document.location.hash == "")
+      {
+        document.location.href= "#" + make_id()
+      }
+    </script>
+  </head>
+  <body>
+    <div id="config">
+      <center>
+        Time out <input type="text" value="20" id="ctimeout" size=2 />
+      </center>
+    </div>
+    <hr />
+    <ul id="messages"></ul>
+    <form action="">
+      <span id="result" style="font-weight: strong; color: red" title="WAR RESULT">0 : 0</span>
+      <input id="name" placeholder="Your name" required />
+      <input id="m" autocomplete="off" placeholder="Your message or word (start with /c to send chat message)" title="To comment press /c message" required />
+      <button title="Press enter or click the button to send">Send</button>
+      <input type="button" id="settingbtn" title="Press enter or click the button to send" value="Setting" />
+    </form>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      function valid_word(word)
+      {
+        // return $.get("https://api.datamuse.com/words?sp=" + word, function(data) {
+        //   console.log(data)
+        //   info = JSON.parse(data)
+        //   if(info.length == 0)
+        //     return false
+        //   return true
+        // })
+        return true
+      }
+      $(function () {
+        var myroomid = document.location.hash.substr(1,document.location.hash.length - 1)
+        $('#name').val(make_id())
+        $('#m').focus()
+        $('#config').fadeOut(100, function(){})
+        var socket = io();
+        var challenge = ""
+        var mywin = 0
+        var interval = 20 // 10 seconds
+        var timer = undefined
+        var counter = 0
+        var words = []
+
+        function new_game()
+        {
+          if(typeof(timer) !== 'undefined')
+              clearInterval(timer)
+          counter = 0
+          challenge = ""
+        }
+
+        function losed(msg)
+        {
+          var user = $('#name').val();
+          socket.emit('chat', user, user + " losed because of " + msg, myroomid);
+          socket.emit('result', user, mywin, myroomid)
+          new_game()
+        }
+
+        function not_me(user)
+        {
+          return ($('#name').val() != user)
+        }
+
+        function is_my_message(roomid)
+        {
+          return myroomid == roomid;
+        }
+
+        function start_count()
+        {
+          counter = counter + 1
+          remain = interval - counter;
+          document.title = "WCW - " + remain
+          if(remain == 0)
+          {
+            losed("Time Out")
+            if(typeof(timer) !== 'undefined')
+              clearInterval(timer)
+          }
+        }
+
+        $('#ctimeout').on("change", function(){
+          interval = $("#ctimeout").val()
+          $('#config').fadeOut(100, function(){})
+        });
+        $('#ctimeout').on("blur", function(){
+          $('#config').fadeOut(100, function(){})
+        });
+
+        $('#name').on("change", function(){
+          socket.emit('changename', $('#name').val(), myroomid);
+        });
+
+        socket.emit('join', $('#name').val(), myroomid)
+
+        $('form').submit(function() {
+          var msg = $('#m').val();
+          var user = $('#name').val();
+          if(msg.startsWith("/c"))
+          {
+            socket.emit('chat', user, msg, myroomid);
+          }
+          else if(msg.startsWith("/set"))
+          {
+            $("#config").fadeIn()
+          }
+          else
+          {
+            msg = msg.toLowerCase().replace(/ /gi, "");
+            if(!valid_word(msg))
+            {
+              losed("Wrong spelling word " + msg)
+            }
+            if(typeof(timer) !== 'undefined')
+            {
+              counter = 0
+              clearInterval(timer)
+            }
+            if(challenge != "" && challenge.charAt(challenge.length - 1) != msg.charAt(0))
+            {
+              losed("Wrong Chain word " + msg)
+            }
+            else if(words.indexOf(msg) != -1)
+            {
+              losed("Dupplicated word " + msg)
+            }
+            else
+            {
+              socket.emit('wordchain', user, msg, myroomid);
+            }
+
+          }
+
+          $('#m').val('');
+          return false;
+        });
+
+        socket.on('chat', function(user, msg, roomid){
+          if(is_my_message(roomid))
+          {
+            if(msg.startsWith("/c"))
+              msg = msg.substr(2, msg.length - 1)
+            $('#messages').append($('<li>').text(user + ": " + msg));
+            window.scrollTo(0, document.body.scrollHeight);
+          }
+        });
+
+        socket.on('result', function(user, otherwin, roomid) {
+          if(is_my_message(roomid))
+          {
+            if(user != $('#name').val())
+            {
+              mywin = mywin + 1
+              alert("Congratulation! You won")
+            }
+            else
+            {
+              alert("You losed")
+            }
+            $('#result').html(mywin + " : " + otherwin)
+            new_game()
+          }
+        });
+
+        socket.on('wordchain', function(user, msg, roomid) {
+          if(is_my_message(roomid))
+          {
+            words.push(msg)
+            challenge = msg
+            $('#messages').append($('<li style="color:blue">').text(user + " => " + msg));
+            window.scrollTo(0, document.body.scrollHeight);
+            if(user != $('#name').val())
+              timer = setInterval(start_count, 1000)
+          }
+        });
+
+        socket.on('join', function(user, roomid) {
+          if(is_my_message(roomid))
+          {
+            if(user != $('#name').val())
+            {
+              $('#messages').append($('<li style="color:red">').text(user + " has joined. Type word to start the game"));
+              window.scrollTo(0, document.body.scrollHeight);
+              words = []
+              new_game()
+            }
+          }
+        });
+
+        socket.on("disconnect", function(user, roomid){
+          if(is_my_message(roomid))
+          {
+            $('#messages').append($('<li style="color:red">').text(user + " has left."));
+            window.scrollTo(0, document.body.scrollHeight);
+            words = []
+            new_game()
+          }
+        });
+
+      });
+    </script>
+  </body>
+</html>
