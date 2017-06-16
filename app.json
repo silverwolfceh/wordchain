@@ -1,0 +1,24 @@
+{
+  "name": "WORDCHAIN-GAME",
+  "description": "The simple wordchain game",
+  "website": "https://github.com/silverwolfceh/wordchain",
+  "repository": "https://github.com/silverwolfceh/wordchain",
+  "logo": "",
+  "success_url": "/",
+  "keywords": [
+    "node",
+    "express",
+    "socket.io",
+    "realtime",
+    "websocket",
+    "wordchain",
+    "game"
+  ],
+  "scripts": {
+  },
+  "addons": [
+  ],
+  "env": {
+    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-nodejs"
+  }
+}
