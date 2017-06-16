@@ -18,3 +18,9 @@ This implementation is based on nodejs, socketio.
 
 # Play
 Open brower at: http://server_ip:3000 and copy the link to your friend
+
+# Deploy
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/silverwolfceh/wordchain)
+
+Besides, the application is deployed on [HEROKU](https://wordchaingame.herokuapp.com)
+
