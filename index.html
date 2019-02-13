@@ -117,7 +117,9 @@
         }
         
         function scrollToLast(){
-            $('div#messContainer').animate({ scrollTop: $("#messages li").last().offset().top}, 'slow');
+            //$('div#messContainer').animate({ scrollTop: $("#messages li").last().offset().top}, 'slow');
+            var divMess = document.getElementById('messContainer');
+            divMess.scrollTop = divMess.scrollHeight;
         }
 
         function losed(msg)
