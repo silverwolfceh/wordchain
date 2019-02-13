@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>WORDCHAIN WAR GAME</title>
+    <title>TALK!</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; margin: 0 auto; max-width: 700px; max-height: 50%; padding: 2px;}
@@ -20,20 +20,43 @@
       #config { visibility: hidden; position: absolute; z-index: 5; display: block; margin: auto; line-height: 2.5; background: #eee}
     </style>
     <script>
-      function make_id()
-      {
-          var text = "";
-          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    function make_id() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 10; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
 
-          for( var i=0; i < 10; i++ )
-              text += possible.charAt(Math.floor(Math.random() * possible.length));
+    if (document.location.hash == "") {
+        document.location.href = "#" + make_id()
+    }
 
-          return text;
-      }
-      if(document.location.hash == "")
-      {
-        document.location.href= "#" + make_id()
-      }
+    function checkCookieName() {
+        var username = getCookie("name");
+        if (username != "") {
+            return username
+        } else {
+            return false
+        }
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    
     </script>
   </head>
   <body>
@@ -69,7 +92,13 @@
       }
       $(function () {
         var myroomid = document.location.hash.substr(1,document.location.hash.length - 1)
-        $('#name').val(make_id())
+        cookieName = checkCookieName();
+        if (cookieName){
+            $('#name').val(cookieName);
+        }
+        else {
+            $('#name').val(make_id())
+        }
         $('#m').focus()
         $('#config').fadeOut(100, function(){})
         var socket = io();
@@ -88,14 +117,6 @@
           challenge = ""
         }
 
-        function losed(msg)
-        {
-          var user = $('#name').val();
-          socket.emit('chat', user, user + " losed because of " + msg, myroomid);
-          socket.emit('result', user, mywin, myroomid)
-          new_game()
-        }
-
         function not_me(user)
         {
           return ($('#name').val() != user)
@@ -104,19 +125,6 @@
         function is_my_message(roomid)
         {
           return myroomid == roomid;
-        }
-
-        function start_count()
-        {
-          counter = counter + 1
-          remain = interval - counter;
-          document.title = "WCW - " + remain
-          if(remain == 0)
-          {
-            losed("Time Out")
-            if(typeof(timer) !== 'undefined')
-              clearInterval(timer)
-          }
         }
 
         $('#ctimeout').on("change", function(){
@@ -128,7 +136,8 @@
         });
 
         $('#name').on("change", function(){
-          socket.emit('changename', $('#name').val(), myroomid);
+            document.cookie = "name="+$('#name').val()
+            socket.emit('changename', $('#name').val(), myroomid);
         });
 
         socket.emit('join', $('#name').val(), myroomid)
@@ -136,41 +145,7 @@
         $('form').submit(function() {
           var msg = $('#m').val();
           var user = $('#name').val();
-          if(1)
-          {
-            socket.emit('chat', user, msg, myroomid);
-          }
-          else if(msg.startsWith("/set"))
-          {
-            $("#config").fadeIn()
-          }
-          else
-          {
-            msg = msg.toLowerCase().replace(/ /gi, "");
-            if(!valid_word(msg))
-            {
-              losed("Wrong spelling word " + msg)
-            }
-            if(typeof(timer) !== 'undefined')
-            {
-              counter = 0
-              clearInterval(timer)
-            }
-            if(challenge != "" && challenge.charAt(challenge.length - 1) != msg.charAt(0))
-            {
-              losed("Wrong Chain word " + msg)
-            }
-            else if(words.indexOf(msg) != -1)
-            {
-              losed("Dupplicated word " + msg)
-            }
-            else
-            {
-              socket.emit('wordchain', user, msg, myroomid);
-            }
-
-          }
-
+          socket.emit('chat', user, msg, myroomid);
           $('#m').val('');
           return false;
         });
@@ -184,36 +159,6 @@
             $('div').animate({
                 scrollTop: $("#messages li").last().offset().top
             }, 'slow');
-            // window.scrollTo(0, document.body.scrollHeight);
-          }
-        });
-
-        socket.on('result', function(user, otherwin, roomid) {
-          if(is_my_message(roomid))
-          {
-            if(user != $('#name').val())
-            {
-              mywin = mywin + 1
-              alert("Congratulation! You won")
-            }
-            else
-            {
-              alert("You losed")
-            }
-            $('#result').html(mywin + " : " + otherwin)
-            new_game()
-          }
-        });
-
-        socket.on('wordchain', function(user, msg, roomid) {
-          if(is_my_message(roomid))
-          {
-            words.push(msg)
-            challenge = msg
-            $('#messages').append($('<li style="color:blue">').text(user + " => " + msg));
-            window.scrollTo(0, document.body.scrollHeight);
-            if(user != $('#name').val())
-              timer = setInterval(start_count, 1000)
           }
         });
 
