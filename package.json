@@ -4,7 +4,8 @@
   "description": "Wordchain game",
   "dependencies": {
     "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+    "socket.io": "^1.7.3",
+    "spellchecker" : "3.5.1"
   },
   "scripts": {
     "start": "nodejs index.js"
