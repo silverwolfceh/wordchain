@@ -223,6 +223,7 @@
         socket.on('result', function(user, otherwin, roomid) {
           if(is_my_message(roomid))
           {
+            alert("Result emited");
             if(user != $('#name').val())
             {
               mywin = mywin + 1
