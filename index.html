@@ -132,7 +132,7 @@
         $('form').submit(function() {
           var msg = $('#m').val();
           var user = $('#name').val();
-          if(msg.startsWith("/c"))
+          if(1)
           {
             socket.emit('chat', user, msg, myroomid);
           }
