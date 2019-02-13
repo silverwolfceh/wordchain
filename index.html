@@ -5,6 +5,7 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
+      .container {border-radius: 5px; background-color: #f2f2f2; padding: 20px; }
       form { background: #eee; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       #m { border: 0; padding: 10px; width: 59%; margin-right: .5%; }
       #name { border: 0; padding: 10px; width: 26%; margin-right: .5%; }
@@ -41,13 +42,15 @@
       </center>
     </div>
     <hr />
-    <ul id="messages"></ul>
+    </div>
     <form action="">
-      <span id="result" style="font-weight: strong; color: red" title="WAR RESULT">0 : 0</span>
-      <input id="name" placeholder="Your name" required />
-      <input id="m" autocomplete="off" placeholder="Your message or word (start with /c to send chat message)" title="To comment press /c message" required />
-      <button title="Press enter or click the button to send">Send</button>
-      <input type="button" id="settingbtn" title="Press enter or click the button to send" value="Setting" />
+        <div class="container">
+            <span id="result" style="font-weight: strong; color: red" title="WAR RESULT">0 : 0</span>
+            <input id="name" placeholder="Your name" required />
+            <input id="m" autocomplete="off" placeholder="Your message or word (start with /c to send chat message)" title="To comment press /c message" required />
+            <button title="Press enter or click the button to send">Send</button>
+            <input type="button" id="settingbtn" title="Press enter or click the button to send" value="Setting" />
+        </div>
     </form>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
