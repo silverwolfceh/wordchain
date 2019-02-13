@@ -230,6 +230,10 @@
               words = []
               new_game()
             }
+            else
+            {
+              $('#messages').append($('<li style="color:red">').text("Hello " + user + ". Welcome to the jungle. Type any word to start the game or /c message to chat"));
+            }
           }
         });
 
