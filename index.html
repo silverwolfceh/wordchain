@@ -116,6 +116,12 @@
           challenge = ""
         }
 
+        function scrollToLast(){
+            // $('div#messContainer').animate({ scrollTop: $("#messages li").last().offset().top}, 1000);
+            var divMess = document.getElementById('messContainer');
+            divMess.scrollTop = divMess.scrollHeight;
+        }
+
         function not_me(user)
         {
           return ($('#name').val() != user)
@@ -155,9 +161,7 @@
             if(msg.startsWith("/c"))
               msg = msg.substr(2, msg.length - 1)
             $('#messages').append($('<li>').text(user + ": " + msg));
-            $('div').animate({
-                scrollTop: $("#messages li").last().offset().top
-            }, 'slow');
+            scrollToLast()
           }
         });
 
