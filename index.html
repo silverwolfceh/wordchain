@@ -80,13 +80,6 @@
     <script>
       function valid_word(word)
       {
-        // return $.get("https://api.datamuse.com/words?sp=" + word, function(data) {
-        //   console.log(data)
-        //   info = JSON.parse(data)
-        //   if(info.length == 0)
-        //     return false
-        //   return true
-        // })
         return true
       }
       $(function () {
@@ -101,12 +94,13 @@
         $('#m').focus()
         $('#config').fadeOut(100, function(){})
         var socket = io();
-        var challenge = ""
-        var mywin = 0
+        var challenge = "";
+        var mywin = 0;
+        var otherwin = 0;
         var interval = 20 // 10 seconds
-        var timer = undefined
-        var counter = 0
-        var words = []
+        var timer = undefined;
+        var counter = 0;
+        var words = [];
 
         function new_game()
         {
@@ -220,13 +214,12 @@
           }
         });
 
-        socket.on('result', function(user, otherwin, roomid) {
+        socket.on('result', function(user, otherwinnotused, roomid) {
           if(is_my_message(roomid))
           {
-            alert("Result emited");
             if(user != $('#name').val())
             {
-              mywin = mywin + 1
+              mywin = mywin + 1;
               alert("WON")
             }
             else
