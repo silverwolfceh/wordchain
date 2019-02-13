@@ -181,7 +181,10 @@
             if(msg.startsWith("/c"))
               msg = msg.substr(2, msg.length - 1)
             $('#messages').append($('<li>').text(user + ": " + msg));
-            window.scrollTo(0, document.body.scrollHeight);
+            $('div').animate({
+                scrollTop: $("#messages li").last().offset().top
+            }, 'slow');
+            // window.scrollTo(0, document.body.scrollHeight);
           }
         });
 
