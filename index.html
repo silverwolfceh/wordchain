@@ -197,7 +197,17 @@
             new_game()
           }
         });
-
+        socket.on('wrongspelling', function(user, msg, roomid) {
+          $('#messages').append($('<li style="color:red">').text(user + " => " + msg));
+          if(is_my_message(roomid))
+          {
+            if(user == $('#name').val())
+            {
+              losed("Wrong spelling")
+            }
+  
+          }
+        });
         socket.on('wordchain', function(user, msg, roomid) {
           if(is_my_message(roomid))
           {
