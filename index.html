@@ -87,7 +87,7 @@
         function losed(msg)
         {
           var user = $('#name').val();
-          socket.emit('chat', user, user + " losed because of " + msg, myroomid);
+          socket.emit('chat', user, user + " loss because of " + msg, myroomid);
           socket.emit('result', user, mywin, myroomid)
           new_game()
         }
@@ -109,7 +109,7 @@
           document.title = "WCW - " + remain
           if(remain == 0)
           {
-            losed("Time Out")
+            losed("time out")
             if(typeof(timer) !== 'undefined')
               clearInterval(timer)
           }
@@ -145,7 +145,7 @@
             msg = msg.toLowerCase().replace(/ /gi, "");
             if(!valid_word(msg))
             {
-              losed("Wrong spelling word " + msg)
+              losed("invalid word (spelling) " + msg)
             }
             if(typeof(timer) !== 'undefined')
             {
@@ -154,11 +154,11 @@
             }
             if(challenge != "" && challenge.charAt(challenge.length - 1) != msg.charAt(0))
             {
-              losed("Wrong Chain word " + msg)
+              losed("invalid chain word " + msg)
             }
             else if(words.indexOf(msg) != -1)
             {
-              losed("Dupplicated word " + msg)
+              losed("dupplicated word " + msg)
             }
             else
             {
@@ -187,11 +187,11 @@
             if(user != $('#name').val())
             {
               mywin = mywin + 1
-              alert("Congratulation! You won")
+              alert("WON")
             }
             else
             {
-              alert("You losed")
+              alert("LOSS")
             }
             $('#result').html(mywin + " : " + otherwin)
             new_game()
@@ -203,7 +203,7 @@
           {
             if(user == $('#name').val())
             {
-              losed("Wrong spelling")
+              losed("invalid word (spelling)")
             }
   
           }
@@ -225,7 +225,7 @@
           {
             if(user != $('#name').val())
             {
-              $('#messages').append($('<li style="color:red">').text(user + " has joined. Type word to start the game"));
+              $('#messages').append($('<li style="color:red">').text(user + " has joined. Type any word to start the game or /c message to chat"));
               window.scrollTo(0, document.body.scrollHeight);
               words = []
               new_game()
