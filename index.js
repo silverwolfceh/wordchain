@@ -2,6 +2,7 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
+var SpellChecker = require 'spellchecker';
 var currentConnections = {};
 
 app.get('/', function(req, res){
@@ -23,7 +24,15 @@ io.on('connection', function(socket){
 
   socket.on('wordchain', function(user, msg, roomid){
     console.log(roomid + " | " + user + ": " + msg)
-    io.emit('wordchain', user , msg, roomid);
+    if(SpellChecker.isMisspelled(msg) == True)
+    {
+      console.log("Wrong spelling " + msg);
+      io.emit('wrongspelling', user, msg, roomid);
+    }
+    else
+    {
+      io.emit('wordchain', user , msg, roomid);
+    }
   });
 
   socket.on('result', function(user, result, roomid) {
