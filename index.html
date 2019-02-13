@@ -4,13 +4,13 @@
     <title>WORDCHAIN WAR GAME</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      .container {border-radius: 5px; background-color: #f2f2f2; padding: 20px; }
-      form { background: #eee; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      #m { border: 0; padding: 10px; width: 59%; margin-right: .5%; }
-      #name { border: 0; padding: 10px; width: 26%; margin-right: .5%; }
-      #result { border: 0; padding: 10px; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      body { font: 13px Helvetica, Arial; margin: 0 auto; max-width: 800px; padding: 0 20px;}
+      .container {border-radius: 5px; background-color: #f2f2f2; padding: 20px;}
+      form { background: #eee; padding: 3px; position: fixed; bottom: 0; width: 60%}
+      #m { border: 0; padding: 10px; width: 60%; margin-right: .5%; }
+      #name { border: 0; padding: 10px; width: 20%; margin-right: .5%; }
+      #result { border: 0; padding: 10px; margin-right: .5%; width: 10%; }
+      form button { width: 10%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       #settingbtn { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; display: none }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
@@ -54,6 +54,7 @@
             <input type="button" id="settingbtn" title="Press enter or click the button to send" value="Setting" />
         </div>
     </form>
+    
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
