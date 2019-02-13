@@ -4,12 +4,13 @@
     <title>WORDCHAIN WAR GAME</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #eee; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      #m { border: 0; padding: 10px; width: 59%; margin-right: .5%; }
-      #name { border: 0; padding: 10px; width: 26%; margin-right: .5%; }
-      #result { border: 0; padding: 10px; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      body { font: 13px Helvetica, Arial; margin: 0 auto; max-width: 700px; max-height: 50%; padding: 2px;}
+      ul {display: block; height: 500px;}
+      form { background: #eee; padding: 3px; ; bottom: 0; width: 100%}
+      #m { border: 0; padding: 10px; width: 65%; margin-right: .5%; }
+      #name { border: 0; padding: 10px; width: 20%; margin-right: .5%; }
+      #result { border: 0; padding: 10px; margin-right: .5%; width: 10%; }
+      form button { width: 10%; background: rgb(130, 224, 255); border: none; padding: 10px; }
       #settingbtn { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; display: none }
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
@@ -18,20 +19,43 @@
       #config { visibility: hidden; position: absolute; z-index: 5; display: block; margin: auto; line-height: 2.5; background: #eee}
     </style>
     <script>
-      function make_id()
-      {
-          var text = "";
-          var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    function make_id() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 10; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
 
-          for( var i=0; i < 10; i++ )
-              text += possible.charAt(Math.floor(Math.random() * possible.length));
+    if (document.location.hash == "") {
+        document.location.href = "#" + make_id()
+    }
 
-          return text;
-      }
-      if(document.location.hash == "")
-      {
-        document.location.href= "#" + make_id()
-      }
+    function checkCookieName() {
+        var username = getCookie("name");
+        if (username != "") {
+            return username
+        } else {
+            return false
+        }
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    
     </script>
   </head>
   <body>
@@ -41,7 +65,9 @@
       </center>
     </div>
     <hr />
-    <ul id="messages"></ul>
+    <div style="overflow: auto">
+        <ul id="messages"></ul>
+    </div>
     <form action="">
       <span id="result" style="font-weight: strong; color: red" title="WAR RESULT">0 : 0</span>
       <input id="name" placeholder="Your name" required />
@@ -65,7 +91,13 @@
       }
       $(function () {
         var myroomid = document.location.hash.substr(1,document.location.hash.length - 1)
-        $('#name').val(make_id())
+        cookieName = checkCookieName();
+        if (cookieName){
+            $('#name').val(cookieName);
+        }
+        else {
+            $('#name').val(make_id())
+        }
         $('#m').focus()
         $('#config').fadeOut(100, function(){})
         var socket = io();
@@ -82,6 +114,10 @@
               clearInterval(timer)
           counter = 0
           challenge = ""
+        }
+        
+        function scrollToLast(){
+            $('div').animate({ scrollTop: $("#messages li").last().offset().top}, 'slow');
         }
 
         function losed(msg)
@@ -124,7 +160,8 @@
         });
 
         $('#name').on("change", function(){
-          socket.emit('changename', $('#name').val(), myroomid);
+            document.cookie = "name="+$('#name').val()
+            socket.emit('changename', $('#name').val(), myroomid);
         });
 
         socket.emit('join', $('#name').val(), myroomid)
@@ -177,7 +214,7 @@
             if(msg.startsWith("/c"))
               msg = msg.substr(2, msg.length - 1)
             $('#messages').append($('<li>').text(user + ": " + msg));
-            window.scrollTo(0, document.body.scrollHeight);
+            scrollToLast()
           }
         });
 
@@ -214,7 +251,7 @@
             words.push(msg)
             challenge = msg
             $('#messages').append($('<li style="color:blue">').text(user + " => " + msg));
-            window.scrollTo(0, document.body.scrollHeight);
+            scrollToLast()
             if(user != $('#name').val())
               timer = setInterval(start_count, 1000)
           }
@@ -226,7 +263,7 @@
             if(user != $('#name').val())
             {
               $('#messages').append($('<li style="color:red">').text(user + " has joined. Type any word to start the game or /c message to chat"));
-              window.scrollTo(0, document.body.scrollHeight);
+              scrollToLast()
               words = []
               new_game()
             }
@@ -241,7 +278,7 @@
           if(is_my_message(roomid))
           {
             $('#messages').append($('<li style="color:red">').text(user + " has left."));
-            window.scrollTo(0, document.body.scrollHeight);
+            scrollToLast()
             words = []
             new_game()
           }
