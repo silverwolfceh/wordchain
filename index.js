@@ -24,7 +24,7 @@ io.on('connection', function(socket){
 
   socket.on('wordchain', function(user, msg, roomid){
     console.log(roomid + " | " + user + ": " + msg)
-    if(SpellChecker.isMisspelled(msg) == True)
+    if(SpellChecker.isMisspelled(msg))
     {
       console.log("Wrong spelling " + msg);
       io.emit('wrongspelling', user, msg, roomid);
