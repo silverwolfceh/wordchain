@@ -8,6 +8,8 @@ This implementation is based on nodejs, socketio.
 2. Auto detect dupplication word
 3. Auto detect timeout
 4. Auto detect chain
+5. Auto detect if word is correct spelling
+6. Translate on click
 
 # Installation
 
