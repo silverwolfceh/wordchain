@@ -90,7 +90,7 @@
           console.log(data);
           info = JSON.parse(data);
           if(info.code == 200)
-            return info.text;
+            return info.text[0];
           else
             return "Unavailable";
         });
