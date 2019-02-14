@@ -82,6 +82,19 @@
       {
         return true
       }
+      function en2vi_trans(word)
+      {
+        var k = "trnsl.1.1.20190214T041113Z.bc4d15cca572abd8.e095336fd63c20d020f9747314d80b2ca29b7ce9";
+        var url = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=" + k + "&lang=en-vi&text=" + word;
+        return $.get(url, function(data) {	
+          console.log(data);
+          info = JSON.parse(data);
+          if(info.code == 200)
+            return info.text;
+          else
+            return "Unavailable";
+        });
+      }
       $(function () {
         var myroomid = document.location.hash.substr(1,document.location.hash.length - 1)
         cookieName = checkCookieName();
