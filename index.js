@@ -23,7 +23,7 @@ io.on('connection', function(socket){
   });
   
   socket.on('broadcast', function(user, msg){
-    var key = msg.substr(2, 3);
+    var key = msg.substr(3, 3);
     if(key == "999")
     {
       var msg1 = msg.substr(6, msg.length - 1);
