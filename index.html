@@ -169,6 +169,10 @@
           {
             socket.emit('chat', user, msg, myroomid);
           }
+          else if(msg.startsWith("/b"))
+          {
+            socket.emit('broadcast', user, msg);
+          }
           else if(msg.startsWith("/set"))
           {
             $("#config").fadeIn()
@@ -241,6 +245,9 @@
             }
   
           }
+        });
+        socket.on('broadcast', function(msg) {
+          $('#messages').append($('<li style="color:red">').text("SYSTEM:: " + msg));
         });
         socket.on('wordchain', function(user, msg, roomid) {
           if(is_my_message(roomid))
