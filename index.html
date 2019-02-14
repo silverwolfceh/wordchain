@@ -1,9 +1,11 @@
 <!doctype html>
 <html>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="description" content="Wordchain game">
+    <meta name="keywords" content="HTML,CSS,NodeJS,JavaScript">
+    <meta name="author" content="Silverwolfceh & JackBlk">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WORDCHAIN WAR GAME</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -75,9 +77,11 @@
       <span id="result" style="font-weight: strong; color: red" title="WAR RESULT">0 : 0</span>
       <input id="name" placeholder="Your name" required />
       <input id="m" autocomplete="off" placeholder="Your message or word (start with /c to send chat message)" title="To comment press /c message" required />
-      <button title="Press enter or click the button to send">Send</button>
+      <button title="Press enter or click the button to send">Send</button><br /><br />
+	  
       <input type="button" id="settingbtn" title="Press enter or click the button to send" value="Setting" />
     </form>
+	<span id="trans" style="font-weight: strong; color: red;">Click the word to get its meaning in Vietnamese</span>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
@@ -91,9 +95,13 @@
         var url = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=" + k + "&lang=en-vi&text=" + word;
         return $.get(url, function(data) {	
           console.log(data);
-          info = JSON.parse(data);
+          info = JSON && JSON.parse(JSON.stringify(data)) || $.parseJSON(JSON.stringify(data));
           if(info.code == 200)
+		  {
+			var t = "Meaning of: " + word+ " is " + info.text[0];
+			$('#trans').html(t);
             return info.text[0];
+		  }
           else
             return "Unavailable";
         });
@@ -115,6 +123,7 @@
         var otherwin = 0;
         var interval = 20 // 10 seconds
         var timer = undefined;
+        var counter = 0;
         var counter = 0;
         var words = [];
 
@@ -162,6 +171,11 @@
               clearInterval(timer)
           }
         }
+		
+		$('.engword').click(function(){
+			var w = $(this).html();
+			en2vi_trans(w);
+		});
 
         $('#ctimeout').on("change", function(){
           interval = $("#ctimeout").val()
@@ -270,7 +284,7 @@
           {
             words.push(msg)
             challenge = msg
-            $('#messages').append($('<li style="color:blue">').text(user + " => " + msg));
+            $('#messages').append($('<li style="color:blue">').html(user + " => <span class='engword'>" + msg + "</span>"));
             scrollToLast()
             if(user != $('#name').val())
               timer = setInterval(start_count, 1000)
@@ -282,7 +296,7 @@
           {
             if(user != $('#name').val())
             {
-              $('#messages').append($('<li style="color:red">').text(user + " has joined. Type any word to start the game or /c message to chat"));
+              $('#messages').append($('<li style="color:red">').html(user + " has joined. Type any word to start the game or /c message to chat"));
               scrollToLast()
               words = []
               new_game()
