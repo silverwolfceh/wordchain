@@ -1,13 +1,13 @@
 # Description
-This is the simple word-chain game where user can play with another user online.
+This is the simple chatbox where user chat realtime with other users based on room.
+No history, no session. #freetheinternet
 
 This implementation is based on nodejs, socketio. 
 
 # Feature
-1. Realtime game-play
-2. Auto detect dupplication word
-3. Auto detect timeout
-4. Auto detect chain
+1. Realtime chat
+2. Room based chat
+3. No log, no history
 
 # Installation
 
@@ -17,10 +17,10 @@ This implementation is based on nodejs, socketio.
 4. Start the server: npm start
 
 # Play
-Open brower at: http://server_ip:3000 and copy the link to your friend
+Open brower at: http://server_ip:3000 and copy the link of room to your friend
 
 # Deploy
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/silverwolfceh/wordchain)
 
-Besides, the application is deployed on [HEROKU](https://noichu.ranhchim.ml)
+Besides, the application is deployed on [HEROKU](https://talk.ranhchim.ml)
 
