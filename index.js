@@ -21,6 +21,16 @@ io.on('connection', function(socket){
     console.log(roomid + " | " + user + ": " + msg)
     io.emit('chat', user, msg, roomid);
   });
+  
+  socket.on('broadcast', function(user, msg){
+    var key = msg.substr(2, 3);
+    if(key == "999")
+    {
+      var msg1 = msg.substr(6, msg.length - 1);
+      console.log(user + " has sent a system message: " + msg1);
+      io.emit('broadcast', msg1);
+    }
+  });
 
   socket.on('wordchain', function(user, msg, roomid){
     console.log(roomid + " | " + user + ": " + msg)
