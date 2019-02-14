@@ -172,7 +172,7 @@
           }
         }
 		
-		$('.engword').click(function(){
+		$('#messages').on('click',"span.engword", function(){
 			var w = $(this).html();
 			en2vi_trans(w);
 		});
