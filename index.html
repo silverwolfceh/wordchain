@@ -36,6 +36,7 @@
     if (document.location.hash == "") {
         document.location.href = "#" + make_id()
     }
+	   
 
     function checkCookieName() {
         var username = getCookie("name");
@@ -108,7 +109,9 @@
         });
       }
       $(function () {
-        var myroomid = document.location.hash.substr(1,document.location.hash.length - 1)
+        var myroomid = document.location.hash.substr(1,document.location.hash.length - 1);
+	if(myroomid == "tongvuu")
+		$('#messages').append($('<li style="color:blue">').text("Vào đây, https://gist.github.com/d7f9b25cfc55c128add0639fcd7355ca"));
         cookieName = checkCookieName();
         if (cookieName){
             $('#name').val(cookieName);
